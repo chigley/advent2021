@@ -29,3 +29,21 @@ func Part1(cmds []Command) int {
 
 	return pos * depth
 }
+
+func Part2(cmds []Command) int {
+	var pos, depth, aim int
+
+	for _, cmd := range cmds {
+		switch cmd.Direction {
+		case Forward:
+			pos += cmd.Units
+			depth += aim * cmd.Units
+		case Down:
+			aim += cmd.Units
+		case Up:
+			aim -= cmd.Units
+		}
+	}
+
+	return pos * depth
+}
