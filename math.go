@@ -14,6 +14,16 @@ func Max(x, y int) int {
 	return y
 }
 
+func Sign(x int) int {
+	if x < 0 {
+		return -1
+	}
+	if x > 0 {
+		return 1
+	}
+	return 0
+}
+
 func Sum(ns []int) int {
 	var sum int
 

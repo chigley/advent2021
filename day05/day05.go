@@ -5,10 +5,14 @@ import (
 )
 
 func Part1(lines [][2]advent2021.XY) int {
-	return countOverlaps(lines)
+	return countOverlaps(lines, false)
 }
 
-func countOverlaps(lines [][2]advent2021.XY) int {
+func Part2(lines [][2]advent2021.XY) int {
+	return countOverlaps(lines, true)
+}
+
+func countOverlaps(lines [][2]advent2021.XY, includeDiagonals bool) int {
 	overlaps := make(map[advent2021.XY]int)
 	for _, line := range lines {
 		p1, p2 := line[0], line[1]
@@ -24,6 +28,12 @@ func countOverlaps(lines [][2]advent2021.XY) int {
 			for x := minX; x <= maxX; x++ {
 				overlaps[advent2021.XY{X: x, Y: p1.Y}]++
 			}
+		} else if includeDiagonals {
+			direction := p2.Subtract(p1).Sign()
+			for p := p1; p != p2; p = p.Add(direction) {
+				overlaps[p]++
+			}
+			overlaps[p2]++
 		}
 	}
 

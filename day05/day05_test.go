@@ -12,9 +12,10 @@ import (
 var tests = []struct {
 	in    string
 	part1 int
+	part2 int
 }{
-	{"example", 5},
-	{"input", 6007},
+	{"example", 5, 12},
+	{"input", 6007, 19349},
 }
 
 func TestDay05(t *testing.T) {
@@ -35,6 +36,7 @@ func TestDay05(t *testing.T) {
 			}
 
 			assert.Equal(t, tt.part1, day05.Part1(lines))
+			assert.Equal(t, tt.part2, day05.Part2(lines))
 		})
 	}
 }
