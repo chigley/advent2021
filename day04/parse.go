@@ -9,7 +9,7 @@ import (
 )
 
 func ParseInput(groups [][]string) (draw []int, boards []Board, err error) {
-	drawLines, err := advent2021.ReadIntLines(strings.NewReader(groups[0][0]))
+	drawLines, err := advent2021.ReadIntLinesReader(strings.NewReader(groups[0][0]))
 	if err != nil {
 		return nil, nil, fmt.Errorf("day04: parsing draw: %w", err)
 	}

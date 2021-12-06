@@ -104,7 +104,17 @@ func readStringGroups(r io.Reader) ([][]string, error) {
 	return groups, nil
 }
 
-func ReadIntLines(r io.Reader) ([][]int, error) {
+func ReadIntLines(name string) ([][]int, error) {
+	f, err := os.Open(name)
+	if err != nil {
+		return nil, fmt.Errorf("advent2021: opening %s: %w", name, err)
+	}
+	defer f.Close()
+
+	return ReadIntLinesReader(f)
+}
+
+func ReadIntLinesReader(r io.Reader) ([][]int, error) {
 	var ret [][]int
 
 	reader := csv.NewReader(r)
