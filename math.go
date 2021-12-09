@@ -66,3 +66,13 @@ func Sum(ns []int) int {
 
 	return sum
 }
+
+func Product(ns []int) int {
+	product := 1
+
+	for _, n := range ns {
+		product *= n
+	}
+
+	return product
+}

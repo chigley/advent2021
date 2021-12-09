@@ -12,9 +12,10 @@ import (
 var tests = []struct {
 	in    string
 	part1 int
+	part2 int
 }{
-	{"example", 15},
-	{"input", 541},
+	{"example", 15, 1134},
+	{"input", 541, 847504},
 }
 
 func TestDay09(t *testing.T) {
@@ -32,6 +33,7 @@ func TestDay09(t *testing.T) {
 			m := day09.NewHeightmap(in)
 
 			assert.Equal(t, tt.part1, day09.Part1(m))
+			assert.Equal(t, tt.part2, day09.Part2(m))
 		})
 	}
 }
