@@ -1,5 +1,14 @@
 package advent2021
 
+var (
+	North = XY{0, 1}
+	East  = XY{1, 0}
+	South = XY{0, -1}
+	West  = XY{-1, 0}
+
+	Dirs = [4]XY{North, East, South, West}
+)
+
 type XY struct {
 	X, Y int
 }
@@ -27,4 +36,12 @@ func (p XY) Sign() XY {
 		X: Sign(p.X),
 		Y: Sign(p.Y),
 	}
+}
+
+func (p XY) Neighbours() [4]XY {
+	var ns [4]XY
+	for i, dir := range Dirs {
+		ns[i] = p.Add(dir)
+	}
+	return ns
 }
