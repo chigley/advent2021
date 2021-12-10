@@ -1,5 +1,16 @@
 package day10
 
+import (
+	"sort"
+)
+
+var openerToCloser = map[rune]rune{
+	'(': ')',
+	'[': ']',
+	'{': '}',
+	'<': '>',
+}
+
 var closerToOpener = map[rune]rune{
 	')': '(',
 	']': '[',
@@ -7,29 +18,52 @@ var closerToOpener = map[rune]rune{
 	'>': '<',
 }
 
-var characterScore = map[rune]int{
+var syntaxScore = map[rune]int{
 	')': 3,
 	']': 57,
 	'}': 1197,
 	'>': 25137,
 }
 
+var autocompleteScore = map[rune]int{
+	')': 1,
+	']': 2,
+	'}': 3,
+	'>': 4,
+}
+
 func Part1(lines []string) int {
 	var score int
 
 	for _, l := range lines {
-		corrupt, firstIllegal := isCorrupt(l)
+		corrupt, firstIllegal, _ := isCorrupt(l)
 		if corrupt {
-			score += characterScore[firstIllegal]
+			score += syntaxScore[firstIllegal]
 		}
 	}
 
 	return score
 }
 
-// isCorrupt returns true iff the given line is corrupt, also returning the
-// first illegal character if so.
-func isCorrupt(line string) (bool, rune) {
+func Part2(lines []string) int {
+	var autocompleteScores []int
+	for _, l := range lines {
+		corrupt, _, completionString := isCorrupt(l)
+		if !corrupt {
+			autocompleteScores = append(autocompleteScores, completionStringScore(completionString))
+		}
+	}
+
+	sort.Ints(autocompleteScores)
+
+	return autocompleteScores[len(autocompleteScores)/2]
+}
+
+// isCorrupt returns true iff the given line is corrupt. If the line is corrupt,
+// the first illegal character is returned in the second parameter.
+// If the line is incomplete, the required completion string is returned in the
+// third parameter.
+func isCorrupt(line string) (bool, rune, string) {
 	var stack []rune
 
 	for _, c := range line {
@@ -44,16 +78,31 @@ func isCorrupt(line string) (bool, rune) {
 		// make sure it matches
 
 		if len(stack) == 0 {
-			return true, c
+			return true, c, ""
 		}
 
 		var actualOpeningChar rune
 		actualOpeningChar, stack = stack[len(stack)-1], stack[:len(stack)-1]
 
 		if actualOpeningChar != expectedOpeningChar {
-			return true, c
+			return true, c, ""
 		}
 	}
 
-	return false, 0
+	// Line isn't corrupt, so it must be incomplete. Reverse the stack and
+	// invert the brackets
+	completionString := make([]rune, len(stack))
+	for i, c := range stack {
+		completionString[len(completionString)-(i+1)] = openerToCloser[c]
+	}
+
+	return false, 0, string(completionString)
+}
+
+func completionStringScore(s string) int {
+	var score int
+	for _, c := range s {
+		score = score*5 + autocompleteScore[c]
+	}
+	return score
 }
