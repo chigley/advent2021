@@ -34,7 +34,7 @@ func (m Heightmap) IsLowPoint(pos advent2021.XY) bool {
 		return false
 	}
 
-	for _, nPos := range pos.Neighbours() {
+	for _, nPos := range pos.Neighbours(false) {
 		neightbourHeight, ok := m[nPos]
 		if !ok {
 			continue
@@ -68,7 +68,7 @@ func (m Heightmap) BasinSize(lowPoint advent2021.XY) int {
 
 		size++
 
-		for _, nPos := range pos.Neighbours() {
+		for _, nPos := range pos.Neighbours(false) {
 			if _, ok := visited[nPos]; ok {
 				continue
 			}

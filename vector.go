@@ -6,7 +6,13 @@ var (
 	South = XY{0, -1}
 	West  = XY{-1, 0}
 
-	Dirs = [4]XY{North, East, South, West}
+	NorthEast = XY{1, 1}
+	SouthEast = XY{1, -1}
+	SouthWest = XY{-1, -1}
+	NorthWest = XY{-1, 1}
+
+	Dirs         = [4]XY{North, East, South, West}
+	DiagonalDirs = [4]XY{NorthEast, SouthEast, SouthWest, NorthWest}
 )
 
 type XY struct {
@@ -38,10 +44,18 @@ func (p XY) Sign() XY {
 	}
 }
 
-func (p XY) Neighbours() [4]XY {
-	var ns [4]XY
-	for i, dir := range Dirs {
-		ns[i] = p.Add(dir)
+func (p XY) Neighbours(includeDiagonals bool) []XY {
+	ns := make([]XY, 0, len(Dirs)+len(DiagonalDirs))
+
+	for _, dir := range Dirs {
+		ns = append(ns, p.Add(dir))
 	}
+
+	if includeDiagonals {
+		for _, dir := range DiagonalDirs {
+			ns = append(ns, p.Add(dir))
+		}
+	}
+
 	return ns
 }
