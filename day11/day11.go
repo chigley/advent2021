@@ -10,3 +10,14 @@ func Part1(in []string) int {
 
 	return flashes
 }
+
+func Part2(in []string) int {
+	g := NewGrid(in)
+
+	steps := 1
+	for g.Step() != 100 {
+		steps++
+	}
+
+	return steps
+}
