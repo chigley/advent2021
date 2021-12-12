@@ -13,6 +13,18 @@ type Node interface {
 }
 
 func Search(start Node) ([]Node, error) {
+	paths, err := search(start, false)
+	if err != nil {
+		return nil, err
+	}
+	return paths[0], nil
+}
+
+func SearchAll(start Node) ([][]Node, error) {
+	return search(start, true)
+}
+
+func search(start Node, findAll bool) ([][]Node, error) {
 	q := list.New()
 	q.PushBack(start)
 
@@ -24,6 +36,8 @@ func Search(start Node) ([]Node, error) {
 		start.Key(): {},
 	}
 
+	var paths [][]Node
+
 	for e := q.Front(); e != nil; e = e.Next() {
 		node := e.Value.(Node)
 
@@ -32,7 +46,12 @@ func Search(start Node) ([]Node, error) {
 			for n := node; n != nil; n = parent[n] {
 				path = append([]Node{n}, path...)
 			}
-			return path[1:], nil
+			paths = append(paths, path[1:])
+
+			if !findAll {
+				return paths, nil
+			}
+			continue
 		}
 
 		neighbours, err := node.Neighbours()
@@ -49,5 +68,8 @@ func Search(start Node) ([]Node, error) {
 		}
 	}
 
-	return nil, advent2021.ErrNoSolution
+	if len(paths) == 0 {
+		return nil, advent2021.ErrNoSolution
+	}
+	return paths, nil
 }
