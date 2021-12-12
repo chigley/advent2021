@@ -14,10 +14,19 @@ const (
 )
 
 func Part1(cs CaveSystem) (int, error) {
+	return numPaths(cs, false)
+}
+
+func Part2(cs CaveSystem) (int, error) {
+	return numPaths(cs, true)
+}
+
+func numPaths(cs CaveSystem, allowedSecondVisit bool) (int, error) {
 	start := SearchNode{
-		CaveSystem:   cs,
-		Path:         []string{CaveStart},
-		VisitedSmall: Caves{CaveStart: {}},
+		CaveSystem:         cs,
+		Path:               []string{CaveStart},
+		VisitedSmall:       nil,
+		AllowedSecondVisit: allowedSecondVisit,
 	}
 
 	paths, err := bfs.SearchAll(&start)
@@ -29,9 +38,10 @@ func Part1(cs CaveSystem) (int, error) {
 }
 
 type SearchNode struct {
-	CaveSystem   CaveSystem
-	Path         []string
-	VisitedSmall Caves
+	CaveSystem         CaveSystem
+	Path               []string
+	VisitedSmall       Caves
+	AllowedSecondVisit bool
 }
 
 func (n *SearchNode) IsGoal() bool {
@@ -47,11 +57,20 @@ func (n *SearchNode) Neighbours() ([]bfs.Node, error) {
 
 	var neighbours []bfs.Node
 	for neighbourCave := range n.CaveSystem[currentCave] {
-		// Don't re-visit a small cave. This also stops us from re-visiting the
-		// start cave, since it happens to be lower case
+		// Don't re-visit the start
+		if neighbourCave == CaveStart {
+			continue
+		}
+
+		// Don't re-visit a small cave, unless we haven't done so yet
+		nextAllowedSecondVisit := n.AllowedSecondVisit
 		if advent2021.IsLower(neighbourCave) {
 			if _, ok := n.VisitedSmall[neighbourCave]; ok {
-				continue
+				if n.AllowedSecondVisit {
+					nextAllowedSecondVisit = false
+				} else {
+					continue
+				}
 			}
 		}
 
@@ -67,9 +86,10 @@ func (n *SearchNode) Neighbours() ([]bfs.Node, error) {
 		nextVisitedSmall[neighbourCave] = struct{}{}
 
 		neighbours = append(neighbours, &SearchNode{
-			CaveSystem:   n.CaveSystem,
-			Path:         nextPath,
-			VisitedSmall: nextVisitedSmall,
+			CaveSystem:         n.CaveSystem,
+			Path:               nextPath,
+			VisitedSmall:       nextVisitedSmall,
+			AllowedSecondVisit: nextAllowedSecondVisit,
 		})
 	}
 	return neighbours, nil
