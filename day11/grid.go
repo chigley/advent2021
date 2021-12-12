@@ -65,3 +65,11 @@ func (g Grid) Flash(pos advent2021.XY) int {
 
 	return flashes
 }
+
+func (g Grid) Clone() Grid {
+	ret := make(Grid, len(g))
+	for k, v := range g {
+		ret[k] = v
+	}
+	return ret
+}

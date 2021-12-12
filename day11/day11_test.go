@@ -30,8 +30,11 @@ func TestDay11(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			assert.Equal(t, tt.part1, day11.Part1(in))
-			assert.Equal(t, tt.part2, day11.Part2(in))
+			g1 := day11.NewGrid(in)
+			g2 := g1.Clone()
+
+			assert.Equal(t, tt.part1, day11.Part1(g1))
+			assert.Equal(t, tt.part2, day11.Part2(g2))
 		})
 	}
 }
