@@ -11,6 +11,14 @@ func Part1(g Grid, folds []string) (int, error) {
 	return len(g), nil
 }
 
+// Part2 assumes Part1 was already called on the same Grid.
+func Part2(g Grid, folds []string) (string, error) {
+	if err := processFolds(g, folds[1:]); err != nil {
+		return "", err
+	}
+	return g.String(), nil
+}
+
 func processFolds(g Grid, folds []string) error {
 	for _, f := range folds {
 		var (
