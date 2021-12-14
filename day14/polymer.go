@@ -79,6 +79,18 @@ func (p *Polymer) Score() int {
 	return advent2021.MaxInts(occs) - advent2021.MinInts(occs)
 }
 
+func (p *Polymer) Clone() *Polymer {
+	pairFreqCopy := make(map[Pair]int, len(p.pairFreq))
+	for k, v := range p.pairFreq {
+		pairFreqCopy[k] = v
+	}
+
+	return &Polymer{
+		pairFreq: pairFreqCopy,
+		lastChar: p.lastChar,
+	}
+}
+
 type Rules map[Pair]rune
 
 // https://www.youtube.com/watch?v=k2qgadSvNyU

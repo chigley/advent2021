@@ -12,9 +12,10 @@ import (
 var tests = []struct {
 	in    string
 	part1 int
+	part2 int
 }{
-	{"example", 1588},
-	{"input", 2321},
+	{"example", 1588, 2188189693529},
+	{"input", 2321, 2399822193707},
 }
 
 func TestDay14(t *testing.T) {
@@ -34,12 +35,18 @@ func TestDay14(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			part1, err := day14.Part1(polymer, rules)
+			part1, err := day14.Part1(polymer.Clone(), rules)
+			if err != nil {
+				t.Error(err)
+			}
+
+			part2, err := day14.Part2(polymer, rules)
 			if err != nil {
 				t.Error(err)
 			}
 
 			assert.Equal(t, tt.part1, part1)
+			assert.Equal(t, tt.part2, part2)
 		})
 	}
 }
