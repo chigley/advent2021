@@ -10,3 +10,11 @@ func Part1(g Grid) int {
 		g.BottomRight(),
 	)
 }
+
+func Part2(g Grid) int {
+	expandedGrid := g.Expand(5)
+	return expandedGrid.ShortestPath(
+		advent2021.XY{X: 0, Y: 0},
+		expandedGrid.BottomRight(),
+	)
+}

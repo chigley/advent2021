@@ -3,6 +3,7 @@ package day15
 import (
 	"container/heap"
 	"math"
+	"strings"
 
 	"github.com/chigley/advent2021"
 	"github.com/chigley/advent2021/priority_queue"
@@ -18,6 +19,32 @@ func NewGrid(in []string) Grid {
 		}
 	}
 	return g
+}
+
+func (g Grid) Expand(n int) Grid {
+	bottomRight := g.BottomRight()
+	origWidth, origHeight := bottomRight.X+1, bottomRight.Y+1
+
+	newWidth := n * origWidth
+	newHeight := n * origHeight
+
+	g2 := make(Grid, newWidth*newHeight)
+	for y := 0; y < newHeight; y++ {
+		for x := 0; x < newWidth; x++ {
+			xSteps := x / origWidth
+			ySteps := y / origHeight
+
+			// TODO: this doesn't work for n>5, but I'm too stupid to spot the
+			// proper formula at the moment
+			risk := g[advent2021.XY{X: x % origWidth, Y: y % origHeight}] + xSteps + ySteps
+			if risk > 9 {
+				risk -= 9
+			}
+
+			g2[advent2021.XY{X: x, Y: y}] = risk
+		}
+	}
+	return g2
 }
 
 func (g Grid) ShortestPath(from, to advent2021.XY) int {
@@ -64,4 +91,17 @@ func (g Grid) BottomRight() advent2021.XY {
 		maxY = advent2021.Max(maxY, pos.Y)
 	}
 	return advent2021.XY{X: maxX, Y: maxY}
+}
+
+func (g Grid) String() string {
+	bottomRight := g.BottomRight()
+
+	var b strings.Builder
+	for y := 0; y <= bottomRight.Y; y++ {
+		for x := 0; x <= bottomRight.X; x++ {
+			b.WriteRune(rune(g[advent2021.XY{X: x, Y: y}] + '0'))
+		}
+		b.WriteRune('\n')
+	}
+	return b.String()
 }
