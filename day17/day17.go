@@ -7,21 +7,33 @@ import (
 	"github.com/chigley/advent2021"
 )
 
-// fudge represents the [0..fudge) range we try for the X and Y components of
-// each starting velocity attempted, and also the number of steps we take before
-// concluding that a velocity doesn't hit the target area.
-const fudge = 1000
+// fudge represents the [-fudge..fudge) range we try for the X and Y components
+// of each starting velocity attempted, and also the number of steps we take
+// before concluding that a velocity doesn't hit the target area.
+const fudge = 250
 
 func Part1(xRange, yRange [2]int) int {
 	maxY := math.MinInt
-	for x := 0; x < fudge; x++ {
-		for y := 0; y < fudge; y++ {
+	for x := -fudge; x < fudge; x++ {
+		for y := -fudge; y < fudge; y++ {
 			if thisMaxY, ok := maxHeight(advent2021.XY{X: x, Y: y}, xRange, yRange); ok {
 				maxY = advent2021.Max(maxY, thisMaxY)
 			}
 		}
 	}
 	return maxY
+}
+
+func Part2(xRange, yRange [2]int) int {
+	var velocities int
+	for x := -fudge; x < fudge; x++ {
+		for y := -fudge; y < fudge; y++ {
+			if _, ok := maxHeight(advent2021.XY{X: x, Y: y}, xRange, yRange); ok {
+				velocities++
+			}
+		}
+	}
+	return velocities
 }
 
 func maxHeight(vel advent2021.XY, xRange, yRange [2]int) (int, bool) {
