@@ -59,3 +59,8 @@ func (p XY) Neighbours(includeDiagonals bool) []XY {
 
 	return ns
 }
+
+func (p XY) InRange(x [2]int, y [2]int) bool {
+	// Assume x and y are sorted arrays
+	return (x[0] <= p.X && p.X <= x[1]) && (y[0] <= p.Y && p.Y <= y[1])
+}
