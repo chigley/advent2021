@@ -117,6 +117,20 @@ func (i *Image) LitPixels() int {
 	return lit
 }
 
+func (i *Image) Clone() *Image {
+	newPixels := make(map[advent2021.XY]Pixel, len(i.Pixels))
+	for k, v := range i.Pixels {
+		newPixels[k] = v
+	}
+
+	return &Image{
+		OrigW:   i.OrigW,
+		OrigH:   i.OrigH,
+		Growths: i.Growths,
+		Pixels:  newPixels,
+	}
+}
+
 func (i *Image) String() string {
 	var b strings.Builder
 	for y := -i.Growths; y < i.OrigH+i.Growths; y++ {
