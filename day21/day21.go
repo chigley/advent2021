@@ -6,7 +6,10 @@ import (
 	"github.com/chigley/advent2021"
 )
 
-const winningScore = 1000
+const (
+	part1WinningScore = 1000
+	part2WinningScore = 21
+)
 
 func Part1(p1, p2 int) int {
 	var (
@@ -17,9 +20,9 @@ func Part1(p1, p2 int) int {
 	)
 
 	var turns int
-	for ; score[0] < winningScore && score[1] < winningScore; turns++ {
+	for ; score[0] < part1WinningScore && score[1] < part1WinningScore; turns++ {
 		roll := d.RollN(3)
-		pos[currentPlayer] = ((pos[currentPlayer] + roll - 1) % 10) + 1
+		pos[currentPlayer] = (pos[currentPlayer]+roll-1)%10 + 1
 
 		score[currentPlayer] += pos[currentPlayer]
 
@@ -44,6 +47,64 @@ func (d *DeterministicDie) RollN(n int) int {
 		sum += d.Roll()
 	}
 	return sum
+}
+
+type gameState struct {
+	pos, score [2]int
+}
+
+func Part2(p1, p2 int) int {
+	universesWon := wins(
+		make(map[gameState][2]int),
+		gameState{pos: [2]int{p1, p2}},
+	)
+	return advent2021.MaxInts(universesWon[:])
+}
+
+func wins(cache map[gameState][2]int, state gameState) [2]int {
+	universesWon, ok := cache[state]
+	if ok {
+		return universesWon
+	}
+
+	pos, score := state.pos, state.score
+
+	if score[0] >= part2WinningScore {
+		return [2]int{1, 0}
+	}
+	if score[1] >= part2WinningScore {
+		return [2]int{0, 1}
+	}
+
+	for i := 1; i <= 3; i++ {
+		for j := 1; j <= 3; j++ {
+			for k := 1; k <= 3; k++ {
+				// Work out player 0's new position and score. Don't modify
+				// pos[0] and score[0] in place since they're shared by other
+				// loop iterations (you absolute melon).
+				newPos := (pos[0]+i+j+k-1)%10 + 1
+				newScore := score[0] + newPos
+
+				// Having updated player 0's position and score, swap the
+				// players around and recurse. Player 1 now becomes player 0.
+				nextWins := wins(
+					cache,
+					gameState{
+						pos:   [2]int{pos[1], newPos},
+						score: [2]int{score[1], newScore},
+					},
+				)
+
+				// In this universe, we need to swap the results back again,
+				// since we swapped the players in our recursive call to wins().
+				universesWon[0] += nextWins[1]
+				universesWon[1] += nextWins[0]
+			}
+		}
+	}
+
+	cache[state] = universesWon
+	return universesWon
 }
 
 func ParseStartingPositions(in []string) (int, int, error) {
